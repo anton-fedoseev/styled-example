@@ -1,11 +1,35 @@
+import { useState, useEffect } from 'react';
 import { ThemeProvider } from 'styled-components';
 
-import { theme, GlobalStyles } from './theme';
+import { GlobalStyles } from './theme';
 
 import logo from './logo.svg';
 import * as Styled from './styled';
 
+const { PUBLIC_URL } = process.env;
+
 function App() {
+    const [theme, setTheme] = useState(null);
+
+    const downloadTheme = async () => {
+        try {
+            const response = await fetch(`${PUBLIC_URL}/theme.json`);
+            const theme = await response.json();
+
+            setTheme(theme);
+        } catch (error) {
+            console.log('problems with loading theme');
+        }
+    };
+
+    useEffect(() => {
+        downloadTheme();
+    }, []);
+
+    if (!theme) {
+        return null;
+    }
+
     return (
         <ThemeProvider theme={theme}>
             <GlobalStyles />
